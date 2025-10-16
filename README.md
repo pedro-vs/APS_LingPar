@@ -154,6 +154,38 @@ Embora seja uma linguagem **didática**, a Codepresso ilustra conceitos importan
 - **Exercícios de lógica de programação**  
   - Estudantes podem praticar estruturas condicionais e de repetição em um contexto divertido e concreto (preparar café).  
 
+## Entrega #2 – Análise Léxica e Sintática (sem semântica/compilação)
+
+Este projeto implementa a **análise léxica e sintática** da linguagem **CoffeeLang** (da Entrega #1) usando **Flex** e **Bison**.  
+**Não** há análise semântica nem compilação nesta etapa.
+
+## Alvo (VM) e Feedback do Professor
+
+**CoffeeVM** (máquina-alvo didática):  
+- **Estados (registradores)**: `WATER` (ml), `BEANS` (g).  
+- **Sensor (somente leitura)**: `CUP` (ml na xícara).  
+  - *Observação do professor acatada:* **CUP é sensor, não registrador**.
+- **Instruções primitivas**: `FILL n`, `GRIND n`, `BREW`, `SERVE`, `CLEAN`, `HALT`.
+
+> Esta entrega **anexa o código da VM** em `vm/` conforme solicitado.  
+> A VM aqui é um **simulador simples** para referência futura (não é usada pelo parser).
+
+## Linguagem (resumo)
+
+Comandos: `fill(n); grind(n); brew; serve; clean; if (ESTADO op N) { ... } [else { ... }] while (ESTADO op N) { ... }`  
+`ESTADO ∈ { WATER, BEANS }` e **sensor** `CUP`.
+
+Gramática completa EBNF: ver Entrega #1.
+
+## Build
+
+Requisitos: `flex` e `bison`, `gcc`.
+
+```bash
+make           # gera binário ./coffeelang
+./coffeelang < examples/ok.coffee
+./coffeelang < examples/erro.coffee
+
 
 
 
