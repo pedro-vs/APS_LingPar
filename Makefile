@@ -1,42 +1,41 @@
+CC     = gcc
+CFLAGS = -Wall -Wextra -O2
 
----
-```make
-# Makefile — APS CoffeeLang (Entrega #2)
-CC      := gcc
-FLEX    := flex
-BISON   := bison
+# alvos padrão
+all: coffeelang coffee_vm
 
-SRC_DIR := src
-VM_DIR  := vm
-BIN     := coffeelang
+# --------------------------------------------------------------------
+# COMPILADOR CODEPRESSO
+# --------------------------------------------------------------------
 
-LEX     := $(SRC_DIR)/coffee.l
-YACC    := $(SRC_DIR)/coffee.y
-MAIN    := $(SRC_DIR)/main.c
+coffeelang: src/main.o src/parser.o src/scanner.o
+	$(CC) $(CFLAGS) -o coffeelang src/main.o src/parser.o src/scanner.o
 
-# Saídas geradas
-SCAN_C  := $(SRC_DIR)/scanner.c
-PARSER_C:= $(SRC_DIR)/parser.c
-PARSER_H:= $(SRC_DIR)/parser.h
+src/main.o: src/main.c src/parser.h
+	$(CC) $(CFLAGS) -c src/main.c -o src/main.o
 
-CFLAGS  := -Wall -Wextra -O2
-LDFLAGS := -lfl
+src/parser.o: src/parser.c src/parser.h
+	$(CC) $(CFLAGS) -c src/parser.c -o src/parser.o
 
-all: $(BIN)
+src/scanner.o: src/scanner.c src/parser.h
+	$(CC) $(CFLAGS) -c src/scanner.c -o src/scanner.o
 
-$(BIN): $(SCAN_C) $(PARSER_C) $(MAIN) $(VM_DIR)/coffee_vm.c $(VM_DIR)/coffee_vm.h
-	$(CC) $(CFLAGS) -o $@ $(PARSER_C) $(SCAN_C) $(MAIN) $(VM_DIR)/coffee_vm.c $(LDFLAGS)
+# gera parser.c e parser.h a partir do coffee.y
+src/parser.c src/parser.h: src/coffee.y
+	bison -d -o src/parser.c src/coffee.y
 
-$(SCAN_C): $(LEX) $(PARSER_H)
-	$(FLEX) -o $@ $(LEX)
+# --------------------------------------------------------------------
+# MÁQUINA VIRTUAL CODEPRESSO
+# --------------------------------------------------------------------
 
-$(PARSER_C) $(PARSER_H): $(YACC)
-	$(BISON) -d -o $(PARSER_C) $(YACC)
+coffee_vm: vm/coffee_vm.c vm/coffee_vm.h
+	$(CC) $(CFLAGS) -o coffee_vm vm/coffee_vm.c
 
-run: all
-	./$(BIN) < examples/ok.coffee
+# --------------------------------------------------------------------
+# LIMPEZA
+# --------------------------------------------------------------------
 
 clean:
-	rm -f $(BIN) $(SCAN_C) $(PARSER_C) $(PARSER_H)
-
-.PHONY: all run clean
+	rm -f coffeelang coffee_vm
+	rm -f src/*.o
+	rm -f src/parser.c src/parser.h src/coffee.tab.c src/coffee.tab.h

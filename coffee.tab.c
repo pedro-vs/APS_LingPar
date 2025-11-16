@@ -145,7 +145,7 @@ typedef struct {
 } condition_t;
 
 /* Saída do compilador: por padrão stdout */
-FILE *out = NULL; 
+static FILE *out = NULL;
 
 /* Gerador de rótulos numéricos: L0, L1, L2, ... */
 static int label_counter = 0;
@@ -325,7 +325,7 @@ typedef union YYSTYPE
     condition_t cond;  /* condição completa */
 }
 /* Line 193 of yacc.c.  */
-#line 329 "src/parser.c"
+#line 329 "coffee.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -338,7 +338,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 342 "src/parser.c"
+#line 342 "coffee.tab.c"
 
 #ifdef short
 # undef short
@@ -1683,7 +1683,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 1687 "src/parser.c"
+#line 1687 "coffee.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1902,5 +1902,16 @@ yyreturn:
 
 void yyerror(const char *s) {
     fprintf(stderr, "Erro de sintaxe: %s\n", s);
+}
+
+int main(int argc, char **argv) {
+    out = stdout;  /* Saída padrão: stdout (pode redirecionar para arquivo) */
+
+    if (yyparse() == 0) {
+        /* Se parse OK, encerra programa da VM com HALT */
+        emit("HALT\n");
+        return 0;
+    }
+    return 1;
 }
 

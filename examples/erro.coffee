@@ -1,3 +1,8 @@
-fill(200)
-grind(15);   // faltou ';' após fill -> erro sintático
-brew;
+fill(600
+grind(45)
+
+while (WATER >= 200) {
+    brew
+    serve;
+    clean;
+}
